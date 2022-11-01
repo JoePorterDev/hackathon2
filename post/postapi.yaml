@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-deployment
+  labels:
+    app: postapi
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: postapi
+  template:
+    metadata:
+      labels:
+        app: postapi
+    spec:
+      containers:
+      - name: postapi
+        image: eu.gcr.io/cloud-ready-roke-team-3/joe/postimage:latest
+        ports:
+        - containerPort: 3000
+        env:
+          - name: DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: db-credentials
+                key: db-post
+                optional: false
+          - name: DATABASE_HOST
+            valueFrom:
+              secretKeyRef:
+                name: db-credentials
+                key: db-host
+                optional: false
+          - name: DATABASE_PORT 
+            value: "5432"
+          - name: MEDIA_SERVICE_URL
+            value: "http://media-service:80"
+          - name: DATABASE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: db-credentials
+                key: username
+                optional: false
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-credentials
+                key: password
+                optional: false
+---       
+apiVersion: v1
+kind: Service
+metadata:
+  name: post-service
+spec:
+  selector:
+    app: postapi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: post-ingress
+  spec:
+    ingressClassName: nginx
+    rules:
+        - http:
+            paths:
+            - pathType: Prefix
+              backend:
+                service:
+                  name: post-service
+                  port:
+                    number: 80
+              path: /posts
