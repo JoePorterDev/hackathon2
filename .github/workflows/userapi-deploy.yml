@@ -80,6 +80,12 @@ jobs:
     - name: Publish
       run: |-
         docker push "$GAR_LOCATION/$PROJECT_ID/joe/$IMAGE:$GITHUB_SHA"
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./user
+    - name: Run Test
+      run: npm test
+      working-directory: ./user
     # Set up kustomize
     - name: Set up Kustomize
       run: |-
