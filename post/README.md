@@ -13,4 +13,4 @@ In order to run the API you'll need to set the following environment variables.
 |DATABASE_PASSWORD|password of the database user|
 |MEDIA_SERVICE_URL|URL of ShareCare Media API|
 
-hello
+hello world
