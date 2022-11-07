@@ -13,3 +13,4 @@ In order to run the API you'll need to set the following environment variables.
 |DATABASE_PASSWORD|password of the database user|
 
 hello world
+test
